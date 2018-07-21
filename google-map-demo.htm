@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geocoding service</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 80%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="floating-panel">
+      <input id="address" type="textbox" value="Dash Point, Tacoma, WA">
+      <input id="submit" type="button" value="Geocode">
+    </div>
+    <div id="map"></div>
+
+    <div id="result">Nothing in here yet</div>
+    <script>
+
+
+      function initMap() {
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 13,
+          center: {lat: 47.3189879, lng: -122.42651369999999}
+        });
+        var geocoder = new google.maps.Geocoder();
+
+        var dashPointBounds = [
+          {lat:47.326341242714506, lng: -122.3786288417524},
+          {lat:47.31889394588679, lng: -122.42738067280709},
+          {lat:47.30399620265249, lng: -122.42291747700631},
+          {lat:47.305160240070585, lng: -122.37674056660592},
+          {lat:47.32669030899435, lng: -122.37811385762154}
+        ];
+
+
+
+        var dashPointPath = new google.maps.Polyline({
+          path: dashPointBounds,
+          geodesic: true,
+          strokeColor: '#ff0000',
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        });
+
+        //activates geocoder to check the value in the textbox
+        //then results in a true or false answer
+
+
+        dashPointPath.setMap(map);
+
+        document.getElementById('submit').addEventListener('click', function() {
+         geocodeAddress(geocoder, map)
+        });
+
+
+        //this is to show on the page that the location you submitted in the input
+        // is within bounds
+        // document.getElementById('submit').addEventListener('click', function(e) {
+        //  console.log(google.maps.geometry.poly.containsLocation(geocodeAddress(geocoder,map), dashPointPoly))
+        // });
+
+
+
+
+
+
+
+
+
+
+        // this is to create a marker when you click on the map
+        // google.maps.event.addListener(map, 'click', function(e){
+        //   var resultColor = google.maps.geometry.poly.containsLocation(e.latLng, dashPointPoly) ?
+        //   'blue' :
+        //   'red';
+        //
+        //   var resultPath =
+        //     google.maps.geometry.poly.containsLocation(e.latLng, dashPointPoly) ?
+        //     "m 0 -1 l 1 2 -2 0 z" :
+        //     google.maps.SymbolPath.CIRCLE;
+        //
+        //     new google.maps.Marker({
+        //         position: e.latLng,
+        //         map: map,
+        //         icon: {
+        //           path: resultPath,
+        //         fillColor: resultColor,
+        //         fillOpacity: .5,
+        //         strokeColor: 'white',
+        //         strokeWeight: .5,
+        //         scale: 10
+        //         }
+        //     });
+        // });
+
+
+  //
+        }
+
+
+
+      function geocodeAddress(geocoder, resultsMap) {
+        var address = document.getElementById('address').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            var a = results[0].geometry.location.lat();
+            var b =results[0].geometry.location.lng();
+            document.getElementById('result').innerHTML = a;
+
+
+            var dashPointBounds = [
+              {lat:47.326341242714506, lng: -122.3786288417524},
+              {lat:47.31889394588679, lng: -122.42738067280709},
+              {lat:47.30399620265249, lng: -122.42291747700631},
+              {lat:47.305160240070585, lng: -122.37674056660592},
+              {lat:47.32669030899435, lng: -122.37811385762154}
+            ];
+
+
+
+            var dashPointPoly = new google.maps.Polygon({paths: dashPointBounds});
+
+
+            console.log(google.maps.geometry.poly.containsLocation(results[0].geometry.location, dashPointPoly))
+            // var marker = new google.maps.Marker({
+            //   map: resultsMap,
+            //   position: results[0].geometry.location
+            // });
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
+    </script>
+
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlkmKw0QQj3jcYFfp4u88K1EpHbYJpRPc&callback=initMap">
+    </script>
+  </body>
+</html>
